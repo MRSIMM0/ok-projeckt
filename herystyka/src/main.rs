@@ -10,7 +10,7 @@ fn main(){
 
     let file_name = "../data.txt";
 
-    let mut number:usize = 10;
+    let mut number:usize = 30;
 
     let mut values = generate(&mut number);
   

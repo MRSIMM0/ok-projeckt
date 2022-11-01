@@ -13,9 +13,12 @@ fn main() {
     let mut output : Vec<i32> = Vec::new();
 
     //for 10 elements
-    let temp = 300000.0;
-    let cool_rate = 0.001;
-    let best =  sim_ann(temp,cool_rate,data.clone());
+    let temp = 20_000.0;
+    let cool_rate = 0.002;
+    let iters = 10_000;
+
+    let best =  sim_ann(temp,cool_rate,data.clone(),iters);
+
     
     //writing output path
     for y in &best {
@@ -67,7 +70,7 @@ fn calculate_distance(x_1: (i32,i32), x_2: (i32,i32)) -> f64 {
     return(f64::powf((x2-x1).into(),2.0) + f64::powf((y2-y1).into(),2.0)).sqrt();
 }
 
-fn sim_ann(mut temp:f64,cool_rate:f64,points: Vec<(i32,i32)>) -> Vec<(i32,i32)> {
+fn sim_ann(mut temp:f64,cool_rate:f64,points: Vec<(i32,i32)>, iters: i32) -> Vec<(i32,i32)> {
     let mut rng = rand::thread_rng();
 
     let mut current  = points.clone();
@@ -80,6 +83,8 @@ fn sim_ann(mut temp:f64,cool_rate:f64,points: Vec<(i32,i32)>) -> Vec<(i32,i32)> 
 
     while temp > 1.0 {
 
+        for _i in 0..iters{
+
         let mut new_solution = current.clone();
 
         new_solution.swap(rng.gen_range(0..points_len),rng.gen_range(0..points_len));
@@ -87,18 +92,20 @@ fn sim_ann(mut temp:f64,cool_rate:f64,points: Vec<(i32,i32)>) -> Vec<(i32,i32)> 
         let current_energy = eval(&new_solution);
         let new_energy = eval(&current);
 
-        if acceptance(current_energy,new_energy,temp) > rng.gen_range(0.0..1.0){
-            current = new_solution.clone();
-        }
         
         if eval(&current) < eval(&best) {
+
             best = current.clone();
-            println!("{:?}",eval(&best));
+            println!("{}", eval(&best));
             
+        }else{
+            if acceptance(current_energy,new_energy,temp) < rng.gen_range(0.0..1.0){
+                current = new_solution.clone();
+            }
         }
+    }
 
-
-        temp *= 1.0 - cool_rate; 
+        temp = temp/(1.0+cool_rate * temp); 
 
     }
 

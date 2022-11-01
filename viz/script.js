@@ -78,6 +78,8 @@ function drawLines(arr,ctx,color){
 
     main.appendChild(distance)
 
+    console.log(calc_dist)
+
     for(let i =0; i<arr.length-1;i++){
 
         let x_start = canvas.width*normalized[arr[i]][0];
