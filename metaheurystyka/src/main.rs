@@ -3,33 +3,48 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 use std::io::BufReader;
-
+use std::env;
 use rand::{self, Rng};
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 
 fn main() {
-    let data = read_from_file("../data.txt");
+
+    let args: Vec<String> = env::args().collect();
+
+    let mut file_name = "../data.txt";
+
+    // let mut output_file = "../met_path.txt";
+
+    let mut temp = 18_200.0;
+    let mut cool_rate = 0.001;
+    let mut iters = 1000;
+
+    if args.len() > 5 {
+        file_name = &args[1];
+        // output_file = &args[2];
+        temp =  args[2].parse().unwrap();
+        cool_rate = args[3].parse().unwrap();
+        iters = args[4].parse().unwrap();
+    }
+
+    let data = read_from_file(file_name);
     let mut output : Vec<i32> = Vec::new();
 
     //for 10 elements
-    let temp = 20_000.0;
-    let cool_rate = 0.002;
-    let iters = 10_000;
-
     let best =  sim_ann(temp,cool_rate,data.clone(),iters);
 
     
     //writing output path
-    for y in &best {
-        output.push(data.iter()
-        .position(|&x| x == *y).unwrap() as i32);
-    }
+    // for y in &best {
+    //     output.push(data.iter()
+    //     .position(|&x| x == *y).unwrap() as i32);
+    // }
 
 
-    println!("{} {}",temp,cool_rate);
-
-    write_out_to_file("../met-path.txt", &mut output);
+    // println!("{} {}",temp,cool_rate);
+    print!("{:?}",eval(&best));
+    // write_out_to_file(output_file, &mut output);
     
 }
 
@@ -96,8 +111,6 @@ fn sim_ann(mut temp:f64,cool_rate:f64,points: Vec<(i32,i32)>, iters: i32) -> Vec
         if eval(&current) < eval(&best) {
 
             best = current.clone();
-            println!("{}", eval(&best));
-            
         }else{
             if acceptance(current_energy,new_energy,temp) < rng.gen_range(0.0..1.0){
                 current = new_solution.clone();
@@ -132,7 +145,7 @@ fn acceptance(energy:f64,new_energy:f64,temp:f64) -> f64{
     if new_energy < energy {
         return 1.0;
     }
-    return ((energy - new_energy) / temp).exp();
+    return ( (energy - new_energy) / temp).exp();
 }
 
 
@@ -154,6 +167,5 @@ fn write_out_to_file(file_name: &str, arr: &mut Vec<i32>){
 
     file.write_all(result.as_bytes()).expect("write failed");
 
-    println!("out written to file" );
 
 }
