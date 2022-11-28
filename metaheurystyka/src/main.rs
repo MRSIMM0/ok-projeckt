@@ -16,35 +16,23 @@ fn main() {
 
     // let mut output_file = "../met_path.txt";
 
-    let mut temp = 18_200.0;
-    let mut cool_rate = 0.001;
-    let mut iters = 1000;
+    let mut temp = 23_800.0;
+    let mut cool_rate = 0.0015;
+    let mut iters = 1_000;
 
     if args.len() > 5 {
         file_name = &args[1];
-        // output_file = &args[2];
         temp =  args[2].parse().unwrap();
         cool_rate = args[3].parse().unwrap();
         iters = args[4].parse().unwrap();
     }
 
     let data = read_from_file(file_name);
-    let mut output : Vec<i32> = Vec::new();
 
-    //for 10 elements
     let best =  sim_ann(temp,cool_rate,data.clone(),iters);
 
-    
-    //writing output path
-    // for y in &best {
-    //     output.push(data.iter()
-    //     .position(|&x| x == *y).unwrap() as i32);
-    // }
 
-
-    // println!("{} {}",temp,cool_rate);
     print!("{:?}",eval(&best));
-    // write_out_to_file(output_file, &mut output);
     
 }
 
@@ -72,7 +60,7 @@ fn read_from_file(file_name: &str) -> Vec<(i32,i32)>{
         }
 
         let x = line.split_whitespace().map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
-        result.push((x[0],x[1]));
+        result.push((x[1],x[2]));
 
     }
 

@@ -9,52 +9,52 @@ use std::process::Command;
 
 fn main() {
 
-    let mut g_temp: f64 = 0.0;
+    // let mut g_temp: f64 = 0.0;
 
-    let mut g_cool: f64 =0.0;
+    // let mut g_cool: f64 =0.0;
 
-    let mut g_iter: i32 = 0;
+    // let mut g_iter: i32 = 0;
     
-    let mut g_err = -9999.9;
+    // let mut g_err = -9999.9;
 
 
 
-        let baseline = heuristic();
+    //     let baseline = heuristic();
 
-        for x in (5000..20000).step_by(1500) {
+    //     for x in (5000..20000).step_by(1500) {
             
         
-            let temperature:f64 = x as f64;
+    //         let temperature:f64 = x as f64;
 
-            for y in 1..10{
-                let cool_rate:f64 = 0.001 * y as f64;
-                for t in (500..5000).step_by(100){
+    //         for y in 1..10{
+    //             let cool_rate:f64 = 0.001 * y as f64;
+    //             for t in (500..5000).step_by(100){
                     
                  
-                    let iterations:i32 = t;
+    //                 let iterations:i32 = t;
 
-                    let mut average = Vec::new(); 
+    //                 let mut average = Vec::new(); 
                    
-                    for p in 1..20{
-                        let ex = metaheurystyka(temperature, cool_rate, iterations);
-                        average.push(ex);
-                    }
+    //                 for p in 1..20{
+    //                     let ex = metaheurystyka(temperature, cool_rate, iterations);
+    //                     average.push(ex);
+    //                 }
                     
-                    let avg : f64 = average.iter().sum::<f64>() as f64 / average.len() as f64;
-                    let err = (baseline - avg)/baseline;
+    //                 let avg : f64 = average.iter().sum::<f64>() as f64 / average.len() as f64;
+    //                 let err = (baseline - avg)/baseline;
 
-                    if err>g_err{
-                        g_err = err;
-                        g_temp =temperature;
-                        g_iter = iterations;
-                        g_cool = cool_rate;
-                        println!("temp: {}\ncool_rate: {}\niter: {}\navg: {}\nheur: {}\nerr: {}% \n",temperature,iterations,cool_rate,avg,baseline,err*100.0);
+    //                 if err>g_err{
+    //                     g_err = err;
+    //                     g_temp =temperature;
+    //                     g_iter = iterations;
+    //                     g_cool = cool_rate;
+    //                     println!("temp: {}\ncool_rate: {}\niter: {}\navg: {}\nheur: {}\nerr: {}% \n",temperature,iterations,cool_rate,avg,baseline,err*100.0);
 
-                    }
+    //                 }
 
-                }
-            }
-        }
+    //             }
+    //         }
+    //     }
     }
 
 
