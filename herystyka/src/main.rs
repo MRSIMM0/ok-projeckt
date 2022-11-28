@@ -91,7 +91,7 @@ fn read_from_file(file_name: &str) -> Vec<(i32, i32)> {
             .split_whitespace()
             .map(|x| x.parse::<i32>().unwrap())
             .collect::<Vec<i32>>();
-        result.push((x[0], x[1]));
+        result.push((x[1], x[2]));
     }
 
     return result;
