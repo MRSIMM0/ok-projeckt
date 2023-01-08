@@ -3,14 +3,25 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <string.h>
-
 #include <stdlib.h>
+#include <fcntl.h>
 
-#define NUM_THREADS 7
+#define NUM_THREADS 5
+#define BUF_SIZE 4096
+
+
 
 struct data
 {
     char filename[128];
+    int temp;
+    float coolRate;
+    int iters;
+};
+
+struct ans
+{
+    float path;
     int temp;
     float coolRate;
     int iters;
@@ -39,33 +50,34 @@ void *readOutput(void *info)
     char iters[20];
 
     intToString(my_data->temp, temp);
-    floatToString(my_data->coolRate,coolRate);
+    floatToString(my_data->coolRate, coolRate);
     intToString(my_data->iters, iters);
 
-    int fd[2], n, pid, exit;
+    int fd[2];
 
     char buf[1028];
 
     pipe(fd);
 
-    pid = fork();
-    if (pid == 0)
-    {
+    if (fork() == 0)
+    {  
+
         close(fd[0]);
         dup2(fd[1], 1);
-        execl("./Simulated_Annealing/target/release/ok-sym", my_data->filename, temp, coolRate,iters, NULL);
+        close(fd[1]);
+
+        execl("/bin/sh","-c","./train.sh",my_data->filename, temp, coolRate, iters, NULL);
     }
     else
-    {
-
+    {   
         close(fd[1]);
         wait(NULL);
-        close(0);
         read(fd[0], buf, 1028);
         float *f = malloc(sizeof(float));
         *f = (float)atof(buf);
         return (void *)f;
     }
+
 }
 
 float avg(float results[NUM_THREADS])
@@ -107,20 +119,36 @@ float evaluate(struct data d)
 
 int main()
 {
+    struct ans bestAns;
 
     struct data d;
 
     strcpy(d.filename, "./data.txt");
-    for (int t = 1000; t < 30000; t += 5000)
+
+    bestAns.path = 9999999999;
+
+    for (int t = 1000; t < 60000; t += 2500)
     {
         d.temp = t;
         for (float c = 0.05; c > 0.01; c -= 0.01)
         {
             d.coolRate = c;
-            for (int i = 1000; i < 5000; i += 500)
+            for (int i = 1000; i < 10000; i += 500)
             {
                 d.iters = i;
-                printf("%f\n", evaluate(d));
+
+                float path = evaluate(d);
+
+                if (bestAns.path > path)
+                {
+                    struct ans newAns;
+                    newAns.path = path;
+                    newAns.temp = t;
+                    newAns.coolRate = c;
+                    newAns.iters = i;
+                    bestAns = newAns;
+                    printf("Path Len: %f\nTemperature: %d\nCool Rate: %f\nIterations: %d \n\n", path, t, c, i);
+                }
             }
         }
     }
