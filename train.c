@@ -127,7 +127,7 @@ int main()
 
     bestAns.path = 9999999999;
 
-    for (int t = 1000; t < 60000; t += 2500)
+    for (int t = 1000; t < 60000; t += 1000)
     {
         d.temp = t;
         for (float c = 0.05; c > 0.01; c -= 0.01)
@@ -139,8 +139,7 @@ int main()
 
                 float path = evaluate(d);
 
-                if (bestAns.path > path)
-                {
+        
                     struct ans newAns;
                     newAns.path = path;
                     newAns.temp = t;
@@ -148,7 +147,9 @@ int main()
                     newAns.iters = i;
                     bestAns = newAns;
                     printf("Path Len: %f\nTemperature: %d\nCool Rate: %f\nIterations: %d \n\n", path, t, c, i);
-                }
+                    
+                
+                closefrom(3);
             }
         }
     }
