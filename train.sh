@@ -1,0 +1,1 @@
+exec cat $1 | ./Simulated_Annealing/target/release/ok-sym $2 $3 $4

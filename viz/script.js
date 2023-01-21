@@ -1,11 +1,11 @@
 
-fetch("../data.txt")
+fetch("../data2.txt")
 .then(response => response.text())
 .then(text => main(text))
 
 function main(data){
 
-
+ 
     arr = data.split("\n")
     arr.shift()
  
@@ -39,11 +39,14 @@ function main(data){
     canvas.width = 1280 * scale;
     canvas.height = 739 * scale;
 
+    console.log(normalized)
+
     drawPoints(normalized,ctx);
 
     fetch("../path.txt")
     .then(response => response.text())
     .then(path => {
+       
         arr = path.split("\n")
         arr.shift()
         arr.push(0)
