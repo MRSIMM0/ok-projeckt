@@ -6,10 +6,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-#define NUM_THREADS 5
-#define BUF_SIZE 4096
-
-
+#define NUM_THREADS 3
 
 struct data
 {
@@ -60,16 +57,16 @@ void *readOutput(void *info)
     pipe(fd);
 
     if (fork() == 0)
-    {  
+    {
 
         close(fd[0]);
         dup2(fd[1], 1);
         close(fd[1]);
 
-        execl("/bin/sh","-c","./train.sh",my_data->filename, temp, coolRate, iters, NULL);
+        execl("/bin/sh", "-c", "./train.sh", my_data->filename, temp, coolRate, iters, NULL);
     }
     else
-    {   
+    {
         close(fd[1]);
         wait(NULL);
         read(fd[0], buf, 1028);
@@ -77,7 +74,6 @@ void *readOutput(void *info)
         *f = (float)atof(buf);
         return (void *)f;
     }
-
 }
 
 float avg(float results[NUM_THREADS])
@@ -127,19 +123,20 @@ int main()
 
     bestAns.path = 9999999999;
 
-    for (int t = 1000; t < 60000; t += 1000)
+    for (int i = 1000; i < 10000; i += 500)
     {
-        d.temp = t;
-        for (float c = 0.05; c > 0.01; c -= 0.01)
+        d.iters = i;
+        for (int t = 100; t < 50000; t += 100)
         {
-            d.coolRate = c;
-            for (int i = 1000; i < 10000; i += 500)
-            {
-                d.iters = i;
 
+            d.temp = t;
+            for (float c = 0.8; c < 0.9; c += 0.1)
+            {
+                d.coolRate = c;
                 float path = evaluate(d);
 
-        
+                if (path < bestAns.path)
+                {
                     struct ans newAns;
                     newAns.path = path;
                     newAns.temp = t;
@@ -147,8 +144,8 @@ int main()
                     newAns.iters = i;
                     bestAns = newAns;
                     printf("Path Len: %f\nTemperature: %d\nCool Rate: %f\nIterations: %d \n\n", path, t, c, i);
-                    
-                
+                }
+
                 closefrom(3);
             }
         }

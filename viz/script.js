@@ -1,5 +1,5 @@
 
-fetch("../data.txt")
+fetch("../data2.txt")
 .then(response => response.text())
 .then(text => main(text))
 

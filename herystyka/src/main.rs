@@ -4,26 +4,43 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::Path;
+use std::result;
+use rand::Rng;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let mut file_name = "../data.txt";
+    let mut file_name = "../data2.txt";
 
     if args.len() > 1 {
         file_name = &args[1];
 
     }
 
+    let mut vect = random_vector(12);
+
+    // write_vector_to_file(file_name,&mut vect);
+
     let mut data = read_from_file(file_name);
 
-    let out = heuristic(&mut data);
+    let mut out = heuristic(&mut data);
 
     let mut path: Vec<(i32,i32)> = Vec::new();
-    // write_out_to_file(output_file, &mut out);
+    write_out_to_file("../path.txt", &mut out);
     for x in out.iter(){
          path.push(data[*x as usize]);
     }
     print!("{}", eval(&path));
+}
+
+fn random_vector(number:i32)->Vec<(i32,i32)>{
+    let mut result = Vec::new();
+    let mut rng = rand::thread_rng();
+    for i in 1..number{
+        result.push((rng.gen_range(0..10),rng.gen_range(0..10)))
+    }
+
+    return result;
+    
 }
 
 
