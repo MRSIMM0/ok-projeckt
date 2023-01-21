@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-#define NUM_THREADS 3
+#define NUM_THREADS 7
 
 struct data
 {
@@ -86,6 +86,19 @@ float avg(float results[NUM_THREADS])
         sum += results[i];
     }
     return sum / NUM_THREADS;
+}
+
+float min(float results[NUM_THREADS]){
+
+    float min = 99999999999;
+
+    for (int i = 0; i < NUM_THREADS; i++)
+    {
+        if(results[i]<min){
+            min = results[i];
+        }
+    }
+
 }
 
 float evaluate(struct data d)

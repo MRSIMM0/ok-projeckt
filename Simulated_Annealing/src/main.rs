@@ -88,7 +88,7 @@ fn sim_ann(mut temp: f64, cool_rate: f64, points: Vec<(i32, i32)>, iters: i32) -
     let mut iter = 0;
 
     while temp > 1.0 && iter<iters {
-        for _i in 0..iters {
+ 
             let mut new_solution = current.clone();
 
             new_solution.swap(rng.gen_range(0..points_len), rng.gen_range(0..points_len));
@@ -96,14 +96,14 @@ fn sim_ann(mut temp: f64, cool_rate: f64, points: Vec<(i32, i32)>, iters: i32) -
             let current_energy = eval(&new_solution);
             let new_energy = eval(&current);
 
-            if eval(&current) < eval(&best) {
+            if eval(&current) <= eval(&best) {
                 best = current.clone();
             } else {
                 if acceptance(new_energy, current_energy, temp) > rng.gen_range(0.0..1.0) {
                     current = new_solution.clone();
                 }
             }
-        }
+        
     
         temp = t0 * cool_rate.powf(iter.into());
         iter+=1;

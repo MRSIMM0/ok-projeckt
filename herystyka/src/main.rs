@@ -9,16 +9,15 @@ use rand::Rng;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let mut file_name = "../data2.txt";
+    let mut file_name = "../data.txt";
 
     if args.len() > 1 {
         file_name = &args[1];
 
     }
 
-    let mut vect = random_vector(12);
-
-    // write_vector_to_file(file_name,&mut vect);
+    let mut vect = random_vector(30);
+    write_vector_to_file(file_name,&mut vect);
 
     let mut data = read_from_file(file_name);
 
@@ -35,8 +34,8 @@ fn main() {
 fn random_vector(number:i32)->Vec<(i32,i32)>{
     let mut result = Vec::new();
     let mut rng = rand::thread_rng();
-    for i in 1..number{
-        result.push((rng.gen_range(0..10),rng.gen_range(0..10)))
+    for i in 0..number{
+        result.push((rng.gen_range(0..1000),rng.gen_range(0..1000)))
     }
 
     return result;
@@ -54,10 +53,11 @@ fn write_vector_to_file(file_name: &str, arr: &mut Vec<(i32, i32)>) {
     };
 
     let mut result = format!("{}", arr.len());
-
+    let mut count = 1;
     for i in arr {
         let (x, y) = i;
-        result = format!("{}\n{} {}", result, x, y);
+        result = format!("{}\n{} {} {}",result,count, x, y);
+        count+=1
     }
     file.write_all(result.as_bytes()).expect("write failed");
 
@@ -108,7 +108,7 @@ fn read_from_file(file_name: &str) -> Vec<(i32, i32)> {
             .split_whitespace()
             .map(|x| x.parse::<i32>().unwrap())
             .collect::<Vec<i32>>();
-        result.push((x[0], x[1]));
+        result.push((x[1], x[2]));
     }
 
     return result;
