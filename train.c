@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-#define NUM_THREADS 7
+#define NUM_THREADS 2
 
 struct data
 {
@@ -88,17 +88,18 @@ float avg(float results[NUM_THREADS])
     return sum / NUM_THREADS;
 }
 
-float min(float results[NUM_THREADS]){
+float min(float results[NUM_THREADS])
+{
 
     float min = 99999999999;
 
     for (int i = 0; i < NUM_THREADS; i++)
     {
-        if(results[i]<min){
+        if (results[i] < min)
+        {
             min = results[i];
         }
     }
-
 }
 
 float evaluate(struct data d)
@@ -126,40 +127,49 @@ float evaluate(struct data d)
     return (avg(res));
 }
 
-int main()
+int main(int argc, char **argv)
 {
     struct ans bestAns;
 
     struct data d;
 
-    strcpy(d.filename, "./data.txt");
+    printf("%d", argc);
+
+    if (argc < 2)
+    {
+        strcpy(d.filename, "./data.txt");
+    }
+    else
+    {
+        strcpy(d.filename, argv[1]);
+
+    }
 
     bestAns.path = 9999999999;
-
-    for (int i = 1000; i < 10000; i += 500)
+    for (int i = 10000; i < 1000000; i += 200)
     {
         d.iters = i;
-        for (int t = 100; t < 50000; t += 100)
+        for (int t = 100; t < 5000000; t += 200)
         {
 
             d.temp = t;
             for (float c = 0.8; c < 0.9; c += 0.1)
             {
-                d.coolRate = c;
-                float path = evaluate(d);
+                    d.coolRate = c;
+                    float path = evaluate(d);
 
-                if (path < bestAns.path)
-                {
-                    struct ans newAns;
-                    newAns.path = path;
-                    newAns.temp = t;
-                    newAns.coolRate = c;
-                    newAns.iters = i;
-                    bestAns = newAns;
-                    printf("Path Len: %f\nTemperature: %d\nCool Rate: %f\nIterations: %d \n\n", path, t, c, i);
-                }
+                    if (path < bestAns.path)
+                    {
+                        struct ans newAns;
+                        newAns.path = path;
+                        newAns.temp = t;
+                        newAns.coolRate = c;
+                        newAns.iters = i;
+                        bestAns = newAns;
+                        printf("Path Len: %f\nTemperature: %d\nCool Rate: %f\nIterations: %d \n\n", path, t, c, i);
+                    }
 
-                closefrom(3);
+                    closefrom(3);
             }
         }
     }

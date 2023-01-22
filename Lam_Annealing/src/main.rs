@@ -11,7 +11,7 @@ fn main() {
 
     let data = read_from_file(file_name);
 
-    // println!("{}", calculate_energy(&lam_annealing(data, 10_000_000)))
+    println!("{}", calculate_energy(&lam_annealing(data, 10_000_000)))
 }
 
 fn read_from_file(file_name: &str) -> Vec<(i32, i32)> {

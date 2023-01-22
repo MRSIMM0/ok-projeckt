@@ -3,13 +3,6 @@ use rand::thread_rng;
 use rand::{self, Rng};
 use std::env;
 use std::io::{self, Read};
-use std::path::Path;
-use std::fs::File;
-use std::cmp::Ordering;
-use std::io::prelude::*;
-use std::io::BufReader;
-use std::result;
-
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -31,7 +24,6 @@ fn main() {
     let mut line = String::new();
 
     let mut result: Vec<(i32, i32)> = Vec::new();
-
     while let Ok(n_bytes) = stdin.read_to_string(&mut line) {
         if n_bytes == 0 {
             break;
@@ -55,13 +47,6 @@ fn main() {
 
     let best = sim_ann(temp, cool_rate, result.clone(), iters);
 
-    // let mut res: Vec<i32> = Vec::new();
-
-    // best.iter().for_each(|&e|  {res.push( result.iter().position(|&x| x == e).unwrap().try_into().unwrap());});
-    // print!("{:?}",res);
-    
-
-    // write_out_to_file("../path.txt", &mut res);
     print!("{:?}", eval(&best));
 }
 
@@ -77,18 +62,14 @@ fn sim_ann(mut temp: f64, cool_rate: f64, points: Vec<(i32, i32)>, iters: i32) -
 
     let mut current = points.clone();
 
-    let t0 = temp.clone();
-
     current.shuffle(&mut thread_rng());
 
     let mut best = current.clone();
 
     let points_len = points.iter().len();
 
-    let mut iter = 0;
-
-    while temp > 1.0 && iter<iters {
- 
+    while temp > 1.0 {
+        for _i in 0..iters {
             let mut new_solution = current.clone();
 
             new_solution.swap(rng.gen_range(0..points_len), rng.gen_range(0..points_len));
@@ -96,23 +77,20 @@ fn sim_ann(mut temp: f64, cool_rate: f64, points: Vec<(i32, i32)>, iters: i32) -
             let current_energy = eval(&new_solution);
             let new_energy = eval(&current);
 
-            if eval(&current) <= eval(&best) {
+            if eval(&current) < eval(&best) {
                 best = current.clone();
             } else {
-                if acceptance(new_energy, current_energy, temp) > rng.gen_range(0.0..1.0) {
+                if acceptance(current_energy, new_energy, temp) < rng.gen_range(0.0..1.0) {
                     current = new_solution.clone();
                 }
             }
-        
-    
-        temp = t0 * cool_rate.powf(iter.into());
-        iter+=1;
+        }
+
+        temp = temp / (1.0 + cool_rate * temp);
     }
 
     return best;
 }
-
-
 
 fn eval(path: &Vec<(i32, i32)>) -> f64 {
     let size = path.iter().len();
@@ -130,25 +108,5 @@ fn acceptance(energy: f64, new_energy: f64, temp: f64) -> f64 {
     if new_energy < energy {
         return 1.0;
     }
-    return -1.0/(1.0+ (energy - new_energy) / temp).exp();
-}
-
-fn write_out_to_file(file_name: &str, arr: &mut Vec<i32>) {
-    let path = Path::new(file_name);
-    let display = path.display();
-
-    let mut file = match File::create(&path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why),
-        Ok(file) => file,
-    };
-
-    let mut result = format!("{}", arr.len());
-
-    for i in arr {
-        result = format!("{}\n{}", result, i);
-    }
-
-    file.write_all(result.as_bytes()).expect("write failed");
-
-    println!("out written to file");
+    return ((energy - new_energy) / temp).exp();
 }

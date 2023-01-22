@@ -16,8 +16,8 @@ fn main() {
 
     }
 
-    let mut vect = random_vector(30);
-    write_vector_to_file(file_name,&mut vect);
+    let mut vect = random_vector(15);
+    // write_vector_to_file(file_name,&mut vect);
 
     let mut data = read_from_file(file_name);
 
