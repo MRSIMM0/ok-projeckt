@@ -1,2 +1,0 @@
-50 0.75 340000 - berlin52 max temp 0.1 liniowe alfa*T
-2490 0.85 52000 - tsp250 max temp
